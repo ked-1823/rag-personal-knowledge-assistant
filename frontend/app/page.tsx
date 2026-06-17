@@ -70,144 +70,197 @@ export default function Home() {
       setAsking(false);
     }
   };
+return (
+  <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 text-white px-4 py-10">
 
-  return (
-    <div className="min-h-screen bg-slate-100 flex flex-col items-center px-4">
-      
-      {/* HEADER */}
-      <div className="w-full max-w-4xl mt-10 text-center">
-        <h1 className="text-4xl font-bold text-slate-800">
-          Personal Knowledge Assistant
-        </h1>
-
-        <p className="text-slate-500 mt-3 text-sm">
-          Upload your PDF documents and interact with them using AI-powered
-          retrieval and generation.
-        </p>
+    {/* HEADER */}
+    <div className="max-w-5xl mx-auto text-center mb-10">
+      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/10 backdrop-blur-md mb-4">
+        <span>✨</span>
+        <span className="text-sm text-slate-300">
+          AI Powered RAG Assistant
+        </span>
       </div>
 
-      {/* UPLOAD CARD */}
-      <div className="w-full max-w-4xl mt-8 bg-slate-50 p-6 rounded-2xl shadow-md border border-slate-200">
-        <h2 className="text-lg font-semibold text-slate-800 mb-1">
-          Upload Document
-        </h2>
+      <h1 className="text-5xl font-extrabold bg-gradient-to-r from-blue-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent">
+        Personal Knowledge Assistant
+      </h1>
 
-        <p className="text-sm text-slate-600 mb-4">
-          Select a PDF file to build your knowledge base.
-        </p>
+      <p className="text-slate-400 mt-4 max-w-2xl mx-auto">
+        Upload PDFs, build a searchable knowledge base, and chat with your
+        documents using Retrieval-Augmented Generation.
+      </p>
+    </div>
 
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={handleFileChange}
-          className="block w-full text-sm text-slate-600
-                     file:mr-4 file:py-2 file:px-4
-                     file:rounded-lg file:border-0
-                     file:bg-blue-600 file:text-white
-                     file:cursor-pointer hover:file:bg-blue-700"
-        />
+    <div className="max-w-5xl mx-auto grid lg:grid-cols-3 gap-6">
 
-        <div className="mt-5 flex items-center gap-4 flex-wrap">
+      {/* LEFT PANEL */}
+      <div className="lg:col-span-1">
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl">
+
+          <h2 className="text-xl font-semibold mb-2">
+            📄 Upload Document
+          </h2>
+
+          <p className="text-slate-400 text-sm mb-5">
+            Upload your PDF and create an intelligent searchable knowledge base.
+          </p>
+
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={handleFileChange}
+            className="block w-full text-sm text-slate-300
+            file:mr-4 file:px-4 file:py-2
+            file:rounded-xl file:border-0
+            file:bg-blue-600 file:text-white
+            hover:file:bg-blue-700"
+          />
+
           <button
             onClick={handleUpload}
             disabled={loading}
-            className="px-5 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+            className="mt-5 w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 font-medium hover:scale-[1.02] transition-all duration-300 shadow-lg"
           >
             {loading ? "Uploading..." : "Upload PDF"}
           </button>
 
           {message && (
-            <span className="text-sm text-green-600 font-medium">
+            <div className="mt-4 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-300 text-sm">
               {message}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* CHAT CARD */}
-      <div className="w-full max-w-4xl mt-6 bg-slate-50 rounded-2xl shadow-md border border-slate-200 flex flex-col">
-        
-        {/* CHAT HEADER */}
-        <div className="border-b border-slate-200 px-6 py-4">
-          <h2 className="font-semibold text-slate-800">
-            Chat with your document
-          </h2>
-
-          <p className="text-sm text-slate-500 mt-1">
-            Ask questions and receive answers grounded in your uploaded PDF.
-          </p>
-        </div>
-
-        {/* MESSAGES */}
-        <div className="h-[500px] overflow-y-auto p-6 space-y-5">
-          {messages.length === 0 && (
-            <div className="h-full flex items-center justify-center">
-              <p className="text-slate-400 text-sm">
-                No messages yet. Upload a PDF and start asking questions.
-              </p>
             </div>
           )}
 
-          {messages.map((msg, index) => (
-            <div key={index} className="space-y-3">
-
-              {/* USER MESSAGE */}
-              <div className="flex justify-end">
-                <div className="bg-blue-600 text-white px-4 py-3 rounded-2xl max-w-[75%] shadow-sm">
-                  {msg.question}
-                </div>
-              </div>
-
-              {/* AI MESSAGE */}
-              <div className="flex justify-start">
-                <div className="bg-slate-200 text-slate-800 px-4 py-3 rounded-2xl max-w-[75%] shadow-sm whitespace-pre-wrap">
-                  {msg.answer}
-                </div>
-              </div>
-
+          <div className="mt-8 space-y-3">
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <p className="text-sm text-slate-400">Framework</p>
+              <p className="font-medium">Next.js + FastAPI</p>
             </div>
-          ))}
 
-          {asking && (
-            <div className="flex justify-start">
-              <div className="bg-slate-200 text-slate-700 px-4 py-3 rounded-2xl shadow-sm">
-                Thinking...
-              </div>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <p className="text-sm text-slate-400">Vector Database</p>
+              <p className="font-medium">ChromaDB</p>
             </div>
-          )}
-        </div>
 
-        {/* INPUT AREA */}
-        <div className="border-t border-slate-200 p-4">
-          <div className="flex gap-3">
-            <input
-              type="text"
-              placeholder="Ask a question about your document..."
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !asking) {
-                  handleAsk();
-                }
-              }}
-              className="flex-1 px-4 py-3 border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-
-            <button
-              onClick={handleAsk}
-              disabled={asking}
-              className="px-6 py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 disabled:opacity-50 transition"
-            >
-              {asking ? "Thinking..." : "Send"}
-            </button>
+            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+              <p className="text-sm text-slate-400">Embeddings</p>
+              <p className="font-medium">OpenAI</p>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* FOOTER */}
-      <div className="mt-6 mb-8 text-xs text-slate-500">
-        Powered by FastAPI • ChromaDB • OpenAI Embeddings • Next.js
+      {/* CHAT SECTION */}
+      <div className="lg:col-span-2">
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
+
+          {/* CHAT HEADER */}
+          <div className="border-b border-white/10 px-6 py-5 flex items-center justify-between">
+            <div>
+              <h2 className="font-semibold text-xl">
+                💬 Chat Assistant
+              </h2>
+
+              <p className="text-slate-400 text-sm mt-1">
+                Ask questions about your uploaded document
+              </p>
+            </div>
+
+            <div className="px-3 py-1 rounded-full bg-green-500/20 text-green-300 text-xs border border-green-500/20">
+              Online
+            </div>
+          </div>
+
+          {/* CHAT BODY */}
+          <div className="h-[600px] overflow-y-auto p-6 space-y-6">
+
+            {messages.length === 0 && (
+              <div className="h-full flex flex-col items-center justify-center text-center">
+                <div className="text-7xl mb-4">🤖</div>
+
+                <h3 className="text-xl font-semibold mb-2">
+                  Start a Conversation
+                </h3>
+
+                <p className="text-slate-400 max-w-md">
+                  Upload a PDF and ask questions to get context-aware answers
+                  grounded in your document.
+                </p>
+              </div>
+            )}
+
+            {messages.map((msg, index) => (
+              <div key={index} className="space-y-4">
+
+                {/* USER */}
+                <div className="flex justify-end">
+                  <div className="max-w-[80%] rounded-3xl rounded-br-md bg-gradient-to-r from-blue-600 to-cyan-500 px-5 py-3 shadow-lg">
+                    {msg.question}
+                  </div>
+                </div>
+
+                {/* AI */}
+                <div className="flex justify-start">
+                  <div className="max-w-[80%] rounded-3xl rounded-bl-md bg-white/10 border border-white/10 px-5 py-3 text-slate-200 whitespace-pre-wrap">
+                    {msg.answer}
+                  </div>
+                </div>
+
+              </div>
+            ))}
+
+            {asking && (
+              <div className="flex justify-start">
+                <div className="bg-white/10 border border-white/10 rounded-2xl px-4 py-3">
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce delay-100" />
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce delay-200" />
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          {/* INPUT */}
+          <div className="border-t border-white/10 p-5 bg-black/20">
+            <div className="flex gap-3">
+
+              <input
+                type="text"
+                placeholder="Ask anything about your document..."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !asking) {
+                    handleAsk();
+                  }
+                }}
+                className="flex-1 bg-white/10 border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+
+              <button
+                onClick={handleAsk}
+                disabled={asking}
+                className="px-7 py-3 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 font-medium hover:scale-105 transition-all duration-300"
+              >
+                {asking ? "Thinking..." : "Send"}
+              </button>
+
+            </div>
+          </div>
+
+        </div>
       </div>
+
     </div>
-  );
+
+    {/* FOOTER */}
+    <div className="text-center mt-10 text-slate-500 text-sm">
+      Powered by FastAPI • ChromaDB • OpenAI Embeddings • Next.js
+    </div>
+
+  </div>
+);
 }

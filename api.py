@@ -7,7 +7,7 @@ from text_reader import pdf_reader
 from chunk import chunking
 from vector_store import create_vector_store
 from pydantic import BaseModel
-
+from fastapi import HTTPException
 import os
 import shutil
 
@@ -81,45 +81,53 @@ def chat(request: ChatRequest):
 
 @app.post("/upload")
 def upload(file: UploadFile = File(...)):
-
     global pdf_uploaded
 
-    os.makedirs("uploads", exist_ok=True)
+    try:
+        os.makedirs("uploads", exist_ok=True)
 
-
-    file_path = os.path.join(
-        "uploads",
-        file.filename
-    )
-
-
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(
-            file.file,
-            buffer
+        file_path = os.path.join(
+            "uploads",
+            file.filename
         )
 
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(
+                file.file,
+                buffer
+            )
 
-    # replace old knowledge base
-    if os.path.exists("chroma_db"):
-        shutil.rmtree("chroma_db")
+        # Remove old vector database
+        if os.path.exists("chroma_db"):
+            shutil.rmtree("chroma_db")
 
+        print("PDF saved:", file_path)
 
-    documents = pdf_reader(file_path)
+        documents = pdf_reader(file_path)
+        print("PDF loaded")
 
-    chunks = chunking(documents)
+        chunks = chunking(documents)
+        print(f"Chunks created: {len(chunks)}")
 
-    create_vector_store(chunks)
+        create_vector_store(chunks)
+        print("Vector store created")
 
+        pdf_uploaded = True
 
-    pdf_uploaded = True
+        return {
+            "message": f"File '{file.filename}' uploaded successfully."
+        }
 
+    except Exception as e:
+        print("=" * 50)
+        print("UPLOAD ERROR")
+        print(str(e))
+        print("=" * 50)
 
-    return {
-        "message": f"File '{file.filename}' uploaded successfully."
-    }
-
-
+        raise HTTPException(
+            status_code=500,
+            detail=str(e)
+        )
 
 @app.get("/history/{session_id}")
 def get_history(session_id: str):

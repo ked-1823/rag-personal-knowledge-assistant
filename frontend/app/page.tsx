@@ -18,10 +18,15 @@ export default function Home() {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) return;
+  if (!selectedFile) {
+    setMessage("Please select a PDF first");
+    return;
+  }
 
-    setLoading(true);
+  setLoading(true);
+  setMessage("");
 
+  try {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
@@ -32,9 +37,18 @@ export default function Home() {
 
     const data = await response.json();
 
+    if (!response.ok) {
+      throw new Error(data.detail || data.error || "Upload failed");
+    }
+
     setMessage(data.message);
+  } catch (error: any) {
+    console.error("Upload Error:", error);
+    setMessage(error.message || "Upload failed");
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   const handleAsk = async () => {
     if (!question.trim()) return;

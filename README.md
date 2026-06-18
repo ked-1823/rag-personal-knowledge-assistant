@@ -1,242 +1,76 @@
-For GitHub and interviews, I'd simplify it. A README should answer:
+# 📚 Personal Knowledge Assistant
 
-1. What is the project?
-2. How does it work?
-3. How do I run it?
-4. What technologies are used?
-5. What are the next improvements?
+> A full-stack Retrieval-Augmented Generation (RAG) application that enables users to upload PDF documents and chat with their knowledge using AI.
 
-Not every implementation detail.
-
----
-
-# 📚 Personal Knowledge Assistant (RAG System)
-
-## 🚀 Overview
-
-Personal Knowledge Assistant is a Retrieval-Augmented Generation (RAG) application that allows users to upload PDF documents and ask questions about their content through a conversational interface.
-
-The system extracts text from PDFs, creates embeddings, stores them in a vector database, retrieves relevant context using semantic search, and generates grounded answers using a Large Language Model (LLM).
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![Next.js](https://img.shields.io/badge/Next.js-Frontend-black)
+![ChromaDB](https://img.shields.io/badge/ChromaDB-VectorDB-orange)
+![LangChain](https://img.shields.io/badge/LangChain-RAG-purple)
 
 ---
 
-## 🧠 Features
+## ✨ Overview
 
-* Upload PDF documents
-* Automatic text extraction and chunking
-* Semantic search using vector embeddings
-* Context-aware answer generation
-* Session-based conversation memory
-* FastAPI backend
-* Next.js frontend
-* ChromaDB vector database
+Personal Knowledge Assistant is a RAG-powered application that transforms PDF documents into an interactive knowledge base.
+
+Users can upload documents, ask natural language questions, and receive AI-generated answers grounded in the uploaded content.
+
+The application combines semantic search, vector embeddings, and LLMs to provide accurate and context-aware responses.
 
 ---
 
-## 🏗️ System Architecture
+## 🎥 Demo
 
-### RAG Pipeline
+**Live Demo:** Coming Soon
+
+**Screenshots:**
+
+| Upload PDF     | Chat Interface |
+| -------------- | -------------- |
+| Add Screenshot | Add Screenshot |
+
+---
+
+## 🚀 Features
+
+* 📄 PDF Upload & Processing
+* ✂️ Intelligent Text Chunking
+* 🧠 OpenAI Embeddings
+* 🔍 Semantic Search
+* 🤖 AI-Powered Question Answering
+* 💬 Conversational Chat Interface
+* 🗂 Session-Based Memory
+* ⚡ FastAPI REST APIs
+* 🎨 Responsive Next.js Frontend
+
+---
+
+## 🏗 Architecture
 
 ```text
-PDF
- ↓
+User Uploads PDF
+        ↓
 Text Extraction
- ↓
+        ↓
 Chunking
- ↓
-Embeddings
- ↓
-ChromaDB
- ↓
-Retriever
- ↓
-LLM
- ↓
-Answer
-```
-
-### Full Stack Architecture
-
-```text
-Next.js Frontend
         ↓
-FastAPI Backend
+Generate Embeddings
         ↓
-RAG Engine
+Store in ChromaDB
         ↓
-ChromaDB
+User Question
         ↓
-PDF Knowledge Base
+Semantic Retrieval
+        ↓
+LLM Generation
+        ↓
+Final Answer
 ```
 
 ---
 
-## 📁 Project Structure
-
-```text
-personal_cb/
-│
-├── chroma_db/              # ChromaDB vector storage
-├── uploads/                # Uploaded PDF files
-├── frontend/               # Next.js frontend
-│
-├── api.py                  # FastAPI backend
-├── main.py                 # CLI version
-├── text_reader.py          # PDF loading
-├── chunk.py                # Text chunking
-├── vector_store.py         # Embeddings + ChromaDB
-├── retrieval.py            # Retrieval logic
-├── generator.py            # LLM response generation
-│
-├── .env
-├── requirements.txt
-└── README.md
-```
-
----
-
-## ⚙️ Core Components
-
-### 📄 PDF Loader
-
-Extracts text and metadata from PDF documents.
-
-### ✂️ Chunking
-
-Document chunks are created using:
-
-```text
-Chunk Size: 1000
-Chunk Overlap: 200
-```
-
-This helps preserve context while improving retrieval accuracy.
-
-### 🧠 Embeddings
-
-Model:
-
-```text
-text-embedding-3-small
-```
-
-Converts text into vector representations.
-
-### 🗄️ ChromaDB
-
-Stores:
-
-* Embeddings
-* Text Chunks
-* Metadata
-
-### 🔍 Retrieval
-
-Flow:
-
-```text
-User Query
-      ↓
-Query Embedding
-      ↓
-Similarity Search
-      ↓
-Top Relevant Chunks
-```
-
-### 🤖 Generation
-
-Flow:
-
-```text
-Retrieved Context
-      +
-Conversation History
-      +
-User Query
-      ↓
-LLM
-      ↓
-Answer
-```
-
----
-
-## 🌐 API Endpoints
-
-### Health Check
-
-```http
-GET /
-```
-
-### Upload PDF
-
-```http
-POST /upload
-```
-
-Uploads a PDF, chunks it, generates embeddings, and stores them in ChromaDB.
-
-### Chat
-
-```http
-POST /chat
-```
-
-Request:
-
-```json
-{
-  "query": "What is attention mechanism?",
-  "session_id": "user-1"
-}
-```
-
-Response:
-
-```json
-{
-  "answer": "..."
-}
-```
-
-### Chat History
-
-```http
-GET /history
-```
-
----
-
-## 💻 Frontend
-
-Built with:
-
-* Next.js
-* React
-* TypeScript
-* Tailwind CSS
-
-Features:
-
-* PDF upload
-* Conversational interface
-* Chat history display
-* Loading states
-* Backend integration
-
----
-
-## 🛠️ Tech Stack
-
-### Backend
-
-* FastAPI
-* LangChain
-* ChromaDB
-* OpenRouter
-* OpenAI Embeddings
+## 🛠 Tech Stack
 
 ### Frontend
 
@@ -245,19 +79,54 @@ Features:
 * TypeScript
 * Tailwind CSS
 
+### Backend
+
+* FastAPI
+* LangChain
+* OpenRouter
+* OpenAI Embeddings
+
 ### Database
 
 * ChromaDB
 
 ---
 
-## ⚡ Local Setup
+## 📂 Project Structure
+
+```text
+personal-knowledge-assistant/
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   └── public/
+│
+├── uploads/
+├── chroma_db/
+│
+├── api.py
+├── main.py
+├── retrieval.py
+├── vector_store.py
+├── generator.py
+├── chunk.py
+├── text_reader.py
+│
+├── requirements.txt
+├── .env
+└── README.md
+```
+
+---
+
+## ⚙️ Installation
 
 ### 1. Clone Repository
 
 ```bash
-git clone <repository-url>
-cd personal_cb
+git clone https://github.com/ked-1823/rag-personal-knowledge-assistant.git
+cd rag-personal-knowledge-assistant
 ```
 
 ### 2. Create Virtual Environment
@@ -266,7 +135,7 @@ cd personal_cb
 python -m venv venv
 ```
 
-Activate environment:
+Activate:
 
 ```bash
 venv\Scripts\activate
@@ -278,15 +147,15 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Create Environment Variables
+### 4. Environment Variables
 
-Create `.env`
+Create a `.env` file:
 
 ```env
 OPENROUTER_API_KEY=your_api_key
 ```
 
-### 5. Run Backend
+### 5. Start Backend
 
 ```bash
 uvicorn api:app --reload
@@ -295,10 +164,10 @@ uvicorn api:app --reload
 Backend:
 
 ```text
-http://127.0.0.1:8000
+http://localhost:8000
 ```
 
-### 6. Run Frontend
+### 6. Start Frontend
 
 ```bash
 cd frontend
@@ -314,72 +183,66 @@ http://localhost:3000
 
 ---
 
-## 📊 Current Status
+## 📡 API Endpoints
 
-| Component         | Status |
-| ----------------- | ------ |
-| PDF Upload        | ✅      |
-| Chunking          | ✅      |
-| Embeddings        | ✅      |
-| ChromaDB          | ✅      |
-| Retrieval         | ✅      |
-| Answer Generation | ✅      |
-| Session Memory    | ✅      |
-| FastAPI APIs      | ✅      |
-| Next.js UI        | ✅      |
-| Deployment        | ⏳      |
+| Method | Endpoint   | Description   |
+| ------ | ---------- | ------------- |
+| GET    | `/`        | Health Check  |
+| POST   | `/upload`  | Upload PDF    |
+| POST   | `/chat`    | Ask Questions |
+| GET    | `/history` | Chat History  |
+
+---
+
+## 🧠 How It Works
+
+1. User uploads a PDF document.
+2. Text is extracted and split into chunks.
+3. Embeddings are generated for each chunk.
+4. Chunks are stored in ChromaDB.
+5. User submits a question.
+6. Relevant chunks are retrieved through semantic search.
+7. Retrieved context is passed to the LLM.
+8. Grounded answer is returned to the user.
+
+---
+
+## 🎯 Key Challenges Solved
+
+* Implemented semantic document retrieval using vector embeddings.
+* Built a complete RAG pipeline from scratch.
+* Integrated FastAPI backend with Next.js frontend.
+* Managed conversational context across user sessions.
+* Optimized chunking strategy for improved retrieval quality.
 
 ---
 
 ## 🚀 Future Improvements
 
-* Persistent database storage for chat sessions
-* Streaming responses
-* Source citations
-* Multi-PDF support
-* Authentication
-* Production deployment
+* Multi-PDF Knowledge Base
+* Source Citations
+* Streaming Responses
+* User Authentication
+* Cloud Storage Integration
+* Docker Support
+* Production Deployment
 
 ---
 
-## 🎯 Learning Outcomes
+## 📚 Learning Outcomes
 
-This project demonstrates:
+This project demonstrates practical experience with:
 
 * Retrieval-Augmented Generation (RAG)
 * Vector Databases
-* Embeddings
-* Semantic Search
+* Embeddings & Semantic Search
 * FastAPI Development
-* Next.js Integration
+* LangChain Workflows
+* Next.js Frontend Development
 * Full-Stack AI Application Development
 
 ---
 
-## 📌 Next Step
+## 📄 License
 
-### Deploy Backend
-
-Recommended:
-
-* Render
-
-### Deploy Frontend
-
-Recommended:
-
-* Vercel
-
-### Environment Variables
-
-Set:
-
-```env
-OPENROUTER_API_KEY=your_api_key
-```
-
-on the deployment platform and update the frontend API URL to the deployed backend endpoint.
-
----
-
-This version is concise, professional, and suitable for GitHub, recruiters, and interview discussions.
+This project is licensed under the MIT License.

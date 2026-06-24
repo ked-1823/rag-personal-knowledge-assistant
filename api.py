@@ -1,13 +1,14 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from typing import List
 from fastapi.middleware.cors import CORSMiddleware
-
+from pydantic import BaseModel
+import gc
 from retrieval import retrieve
 from generator import generate_answer
 from text_reader import pdf_reader
 from chunk import chunking
 from vector_store import create_vector_store
-from pydantic import BaseModel
-from fastapi import HTTPException
+
 import os
 import shutil
 
@@ -22,12 +23,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 pdf_uploaded = False
-
 chat_sessions = {}
 
-# how many previous conversations to send to LLM
+# How many previous conversations to send to LLM
 MAX_HISTORY = 3
 
 
@@ -37,9 +36,11 @@ def home():
         "message": "RAG api working"
     }
 
+
 class ChatRequest(BaseModel):
     query: str
     session_id: str
+
 
 @app.post("/chat")
 def chat(request: ChatRequest):
@@ -53,69 +54,108 @@ def chat(request: ChatRequest):
 
     if session_id not in chat_sessions:
         chat_sessions[session_id] = []
+
     session_history = chat_sessions[session_id]
+
+    # Retrieve relevant chunks
     retrieved_docs = retrieve(query)
 
-
-    # send only recent chat history to LLM
+    # Send only recent chat history to LLM
     recent_history = session_history[-MAX_HISTORY:]
 
-
+    # Generate answer
     answer = generate_answer(
         query,
         retrieved_docs,
         recent_history
     )
 
-
-    chat_sessions[session_id].append({
-        "question": query,
-        "answer": answer
-    })
+    # Store conversation
+    chat_sessions[session_id].append(
+        {
+            "question": query,
+            "answer": answer
+        }
+    )
 
     return {
         "answer": answer
     }
 
 
-
 @app.post("/upload")
-def upload(file: UploadFile = File(...)):
+def upload(files: List[UploadFile] = File(...)):
     global pdf_uploaded
-
-    try:
-        os.makedirs("uploads", exist_ok=True)
-
-        file_path = os.path.join(
-            "uploads",
-            file.filename
+    if len(files) == 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Please upload at least one PDF."
         )
 
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(
-                file.file,
-                buffer
-            )
+    if len(files) > 4:
+        raise HTTPException(
+            status_code=400,
+            detail="Maximum 4 PDFs allowed."
+        )
+
+    try:
+        # Create uploads directory
+        os.makedirs("uploads", exist_ok=True)
 
         # Remove old vector database
+        gc.collect()
+
         if os.path.exists("chroma_db"):
-            shutil.rmtree("chroma_db")
+            shutil.rmtree("chroma_db", ignore_errors=True)
 
-        print("PDF saved:", file_path)
+        all_documents = []
 
-        documents = pdf_reader(file_path)
-        print("PDF loaded")
+        # Process all uploaded PDFs
+        for file in files:
 
-        chunks = chunking(documents)
-        print(f"Chunks created: {len(chunks)}")
+            file_path = os.path.join(
+                "uploads",
+                file.filename
+            )
 
+            # Save PDF
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(
+                    file.file,
+                    buffer
+                )
+
+            print("PDF saved:", file_path)
+
+            # Read PDF
+            documents = pdf_reader(file_path)
+
+            print(
+                f"Loaded {len(documents)} pages from {file.filename}"
+            )
+
+            all_documents.extend(documents)
+
+        print(
+            f"Total documents loaded: {len(all_documents)}"
+        )
+
+        # Create chunks
+        chunks = chunking(all_documents)
+
+        print(
+            f"Chunks created: {len(chunks)}"
+        )
+
+        # Create vector database
         create_vector_store(chunks)
+
         print("Vector store created")
 
         pdf_uploaded = True
 
         return {
-            "message": f"File '{file.filename}' uploaded successfully."
+            "message": f"{len(files)} PDFs uploaded successfully."
         }
 
     except Exception as e:
@@ -128,6 +168,7 @@ def upload(file: UploadFile = File(...)):
             status_code=500,
             detail=str(e)
         )
+
 
 @app.get("/history/{session_id}")
 def get_history(session_id: str):

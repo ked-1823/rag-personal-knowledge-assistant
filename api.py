@@ -109,7 +109,10 @@ def upload(files: List[UploadFile] = File(...)):
    
         if os.path.exists("chroma_db"):
             shutil.rmtree("chroma_db", ignore_errors=True)
- 
+        if os.path.exists("uploads"):
+            shutil.rmtree("uploads", ignore_errors=True)
+
+        os.makedirs("uploads", exist_ok=True)
 
         all_documents = []
 

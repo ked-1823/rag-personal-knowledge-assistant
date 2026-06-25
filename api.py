@@ -1,8 +1,10 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from typing import List
+from typing import Annotated
+
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import gc
+from typing import List
 from retrieval import retrieve
 from generator import generate_answer
 from text_reader import pdf_reader
@@ -130,6 +132,8 @@ def upload(files: List[UploadFile] = File(...)):
 
             # Read PDF
             documents = pdf_reader(file_path)
+            for doc in documents:
+                doc.metadata["source"]=file.filename
 
             print(
                 f"Loaded {len(documents)} pages from {file.filename}"

@@ -10,6 +10,7 @@ export default function Home() {
   const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<any[]>([]);
   const [asking, setAsking] = useState(false);
+  const [sessionId] = useState(() => crypto.randomUUID());
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -38,6 +39,9 @@ export default function Home() {
 
     try {
       const formData = new FormData();
+
+      // NEW
+      formData.append("session_id", sessionId);
 
       selectedFiles.forEach((file) => {
         formData.append("files", file);
@@ -76,7 +80,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           query: question,
-          session_id: "user-1",
+          session_id: sessionId,
         }),
       });
 

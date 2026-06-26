@@ -3,12 +3,19 @@ from langchain_chroma import Chroma
 from dotenv import load_dotenv
 import os
 import gc
+import shutil
 
-def create_vector_store(chunks):
+def create_vector_store(chunks, session_id):
     load_dotenv()
 
-    persist_directory = "chroma_db"
+    persist_directory = os.path.join("chroma_db", session_id)
 
+# Remove only this session's vector database
+    if os.path.exists(persist_directory):
+        shutil.rmtree(persist_directory, ignore_errors=True)
+
+    os.makedirs(persist_directory, exist_ok=True)
+    
     embedding = OpenAIEmbeddings(
         model="text-embedding-3-small",
         openai_api_key=os.getenv("OPENAI_API_KEY"),
@@ -20,6 +27,7 @@ def create_vector_store(chunks):
         embedding,
         persist_directory=persist_directory
     )
+    
 
     del vector_store
     gc.collect()

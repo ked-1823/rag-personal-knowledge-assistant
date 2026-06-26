@@ -4,10 +4,10 @@ from dotenv import load_dotenv
 import os
 
 
-def retrieve(query):
+def retrieve(query, session_id):
     load_dotenv()
 
-    persist_directory = "chroma_db"
+    persist_directory = os.path.join("chroma_db", session_id)
 
     embedding = OpenAIEmbeddings(
         model="text-embedding-3-small",
@@ -19,6 +19,7 @@ def retrieve(query):
         persist_directory=persist_directory,
         embedding_function=embedding
     )
+    
 
     results = vector_store.similarity_search(query,k=10)
 

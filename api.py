@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form
 from typing import Annotated
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -60,7 +60,7 @@ def chat(request: ChatRequest):
     session_history = chat_sessions[session_id]
 
     # Retrieve relevant chunks
-    retrieved_docs = retrieve(query)
+    retrieved_docs = retrieve(query,session_id)
 
     # Send only recent chat history to LLM
     recent_history = session_history[-MAX_HISTORY:]
@@ -86,7 +86,10 @@ def chat(request: ChatRequest):
 
 
 @app.post("/upload")
-def upload(files: List[UploadFile] = File(...)):
+def upload(
+    session_id: str = Form(...),
+    files: List[UploadFile] = File(...)
+):
     global pdf_uploaded
     if len(files) == 0:
         raise HTTPException(
@@ -102,17 +105,13 @@ def upload(files: List[UploadFile] = File(...)):
 
     try:
         # Create uploads directory
-        os.makedirs("uploads", exist_ok=True)
+        upload_dir = os.path.join("uploads", session_id)
+        os.makedirs(upload_dir, exist_ok=True)
 
         # Remove old vector database
         gc.collect()
    
-        if os.path.exists("chroma_db"):
-            shutil.rmtree("chroma_db", ignore_errors=True)
-        if os.path.exists("uploads"):
-            shutil.rmtree("uploads", ignore_errors=True)
-
-        os.makedirs("uploads", exist_ok=True)
+       
 
         all_documents = []
 
@@ -120,7 +119,7 @@ def upload(files: List[UploadFile] = File(...)):
         for file in files:
 
             file_path = os.path.join(
-                "uploads",
+                upload_dir,
                 file.filename
             )
 
@@ -156,7 +155,7 @@ def upload(files: List[UploadFile] = File(...)):
         )
 
         # Create vector database
-        create_vector_store(chunks)
+        create_vector_store(chunks,session_id)
 
         print("Vector store created")
 

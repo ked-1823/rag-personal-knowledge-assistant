@@ -46,43 +46,39 @@ class ChatRequest(BaseModel):
 
 @app.post("/chat")
 def chat(request: ChatRequest):
-    query = request.query
-    session_id = request.session_id
+    try:
+        query = request.query
+        session_id = request.session_id
 
-    if not pdf_uploaded:
-        return {
-            "error": "Please upload a PDF first"
-        }
+        if not pdf_uploaded:
+            return {"error": "Please upload a PDF first"}
 
-    if session_id not in chat_sessions:
-        chat_sessions[session_id] = []
+        if session_id not in chat_sessions:
+            chat_sessions[session_id] = []
 
-    session_history = chat_sessions[session_id]
+        session_history = chat_sessions[session_id]
 
-    # Retrieve relevant chunks
-    retrieved_docs = retrieve(query,session_id)
+        retrieved_docs = retrieve(query, session_id)
 
-    # Send only recent chat history to LLM
-    recent_history = session_history[-MAX_HISTORY:]
+        recent_history = session_history[-MAX_HISTORY:]
 
-    # Generate answer
-    answer = generate_answer(
-        query,
-        retrieved_docs,
-        recent_history
-    )
+        answer = generate_answer(
+            query,
+            retrieved_docs,
+            recent_history
+        )
 
-    # Store conversation
-    chat_sessions[session_id].append(
-        {
+        chat_sessions[session_id].append({
             "question": query,
             "answer": answer
-        }
-    )
+        })
 
-    return {
-        "answer": answer
-    }
+        return {"answer": answer}
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()   # <-- THIS IS IMPORTANT
+        return {"error": str(e)}
 
 
 @app.post("/upload")

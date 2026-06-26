@@ -2,6 +2,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from dotenv import load_dotenv
 import os
+import gc 
 
 
 def retrieve(query, session_id):
@@ -19,12 +20,10 @@ def retrieve(query, session_id):
         persist_directory=persist_directory,
         embedding_function=embedding
     )
-    
 
-    results = vector_store.similarity_search(query,k=10)
+    results = vector_store.similarity_search(query, k=10)
 
-    # Debug metadata
-    for doc in results:
-        print("METADATA:", doc.metadata)
+    del vector_store   # <-- add this
+    gc.collect()       # <-- add this
 
     return results
